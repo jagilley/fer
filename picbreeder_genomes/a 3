@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<data version="1.0">
+    <genome age="74">
+        <identifier branch="576" id="289"/>
+        <parents count="1">
+            <identifier branch="576" id="215"/>
+        </parents>
+        <nodes count="23">
+            <node type="hidden">
+                <marking branch="576" id="30"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="64"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="201"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="223"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="238"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="281"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="298"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="321"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="576" id="360"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node label="bias" type="in">
+                <marking branch="534" id="0"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="d" type="in">
+                <marking branch="534" id="1"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="x" type="in">
+                <marking branch="534" id="2"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="y" type="in">
+                <marking branch="534" id="3"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="ink" type="out">
+                <marking branch="534" id="4"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="534" id="5"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="534" id="32"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="540" id="106"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="540" id="156"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="541" id="67"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="542" id="44"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="542" id="96"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="542" id="103"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="542" id="136"/>
+                <activation>sin(x)</activation>
+            </node>
+        </nodes>
+        <links count="57">
+            <link>
+                <marking branch="576" id="31"/>
+                <source branch="542" id="103"/>
+                <target branch="576" id="30"/>
+                <weight>-0.4450539653659765</weight>
+            </link>
+            <link>
+                <marking branch="576" id="32"/>
+                <source branch="576" id="30"/>
+                <target branch="540" id="106"/>
+                <weight>0.7491848415195232</weight>
+            </link>
+            <link>
+                <marking branch="576" id="41"/>
+                <source branch="540" id="106"/>
+                <target branch="534" id="5"/>
+                <weight>-1.6228716924121847</weight>
+            </link>
+            <link>
+                <marking branch="576" id="65"/>
+                <source branch="540" id="156"/>
+                <target branch="576" id="64"/>
+                <weight>-0.3173481794226165</weight>
+            </link>
+            <link>
+                <marking branch="576" id="66"/>
+                <source branch="576" id="64"/>
+                <target branch="540" id="106"/>
+                <weight>1.4906547454295054</weight>
+            </link>
+            <link>
+                <marking branch="576" id="76"/>
+                <source branch="540" id="106"/>
+                <target branch="534" id="4"/>
+                <weight>0.2745979798753708</weight>
+            </link>
+            <link>
+                <marking branch="576" id="81"/>
+                <source branch="542" id="103"/>
+                <target branch="542" id="44"/>
+                <weight>-0.25924680724610183</weight>
+            </link>
+            <link>
+                <marking branch="576" id="161"/>
+                <source branch="542" id="96"/>
+                <target branch="534" id="5"/>
+                <weight>-0.8522176397590367</weight>
+            </link>
+            <link>
+                <marking branch="576" id="183"/>
+                <source branch="541" id="67"/>
+                <target branch="542" id="103"/>
+                <weight>0.47531739639476633</weight>
+            </link>
+            <link>
+                <marking branch="576" id="202"/>
+                <source branch="541" id="67"/>
+                <target branch="576" id="201"/>
+                <weight>-1.0341815267194334</weight>
+            </link>
+            <link>
+                <marking branch="576" id="203"/>
+                <source branch="576" id="201"/>
+                <target branch="534" id="32"/>
+                <weight>-1.319531079315555</weight>
+            </link>
+            <link>
+                <marking branch="576" id="224"/>
+                <source branch="540" id="106"/>
+                <target branch="576" id="223"/>
+                <weight>2.1046613275019848</weight>
+            </link>
+            <link>
+                <marking branch="576" id="225"/>
+                <source branch="576" id="223"/>
+                <target branch="534" id="32"/>
+                <weight>-1.1641215853899358</weight>
+            </link>
+            <link>
+                <marking branch="576" id="239"/>
+                <source branch="534" id="3"/>
+                <target branch="576" id="238"/>
+                <weight>-2.261658087441334</weight>
+            </link>
+            <link>
+                <marking branch="576" id="240"/>
+                <source branch="576" id="238"/>
+                <target branch="541" id="67"/>
+                <weight>0.29633764633153215</weight>
+            </link>
+            <link>
+                <marking branch="576" id="245"/>
+                <source branch="534" id="3"/>
+                <target branch="576" id="30"/>
+                <weight>0.42425888901734243</weight>
+            </link>
+            <link>
+                <marking branch="576" id="264"/>
+                <source branch="542" id="103"/>
+                <target branch="534" id="32"/>
+                <weight>-1.344298698285892</weight>
+            </link>
+            <link>
+                <marking branch="576" id="282"/>
+                <source branch="576" id="30"/>
+                <target branch="576" id="281"/>
+                <weight>1.636583472800109</weight>
+            </link>
+            <link>
+                <marking branch="576" id="283"/>
+                <source branch="576" id="281"/>
+                <target branch="540" id="106"/>
+                <weight>-0.09854233930213208</weight>
+            </link>
+            <link>
+                <marking branch="576" id="299"/>
+                <source branch="542" id="103"/>
+                <target branch="576" id="298"/>
+                <weight>1.0200984857720672</weight>
+            </link>
+            <link>
+                <marking branch="576" id="300"/>
+                <source branch="576" id="298"/>
+                <target branch="534" id="32"/>
+                <weight>-1.7487136253008708</weight>
+            </link>
+            <link>
+                <marking branch="576" id="322"/>
+                <source branch="534" id="0"/>
+                <target branch="576" id="321"/>
+                <weight>1.2497459339294916</weight>
+            </link>
+            <link>
+                <marking branch="576" id="323"/>
+                <source branch="576" id="321"/>
+                <target branch="534" id="32"/>
+                <weight>0.316887078352996</weight>
+            </link>
+            <link>
+                <marking branch="576" id="361"/>
+                <source branch="541" id="67"/>
+                <target branch="576" id="360"/>
+                <weight>-2.242269171493547</weight>
+            </link>
+            <link>
+                <marking branch="576" id="362"/>
+                <source branch="576" id="360"/>
+                <target branch="534" id="32"/>
+                <weight>-0.8102427180770357</weight>
+            </link>
+            <link>
+                <marking branch="576" id="377"/>
+                <source branch="541" id="67"/>
+                <target branch="576" id="281"/>
+                <weight>0.9453575810912882</weight>
+            </link>
+            <link>
+                <marking branch="576" id="466"/>
+                <source branch="542" id="44"/>
+                <target branch="576" id="30"/>
+                <weight>0.7915699340057758</weight>
+            </link>
+            <link>
+                <marking branch="576" id="470"/>
+                <source branch="576" id="281"/>
+                <target branch="576" id="321"/>
+                <weight>2.753002161446246</weight>
+            </link>
+            <link>
+                <marking branch="576" id="491"/>
+                <source branch="534" id="1"/>
+                <target branch="576" id="281"/>
+                <weight>-1.6859600613138819</weight>
+            </link>
+            <link>
+                <marking branch="576" id="545"/>
+                <source branch="534" id="1"/>
+                <target branch="576" id="321"/>
+                <weight>-2.864702482305879</weight>
+            </link>
+            <link>
+                <marking branch="534" id="6"/>
+                <source branch="534" id="0"/>
+                <target branch="534" id="5"/>
+                <weight>-1.6413524971439237</weight>
+            </link>
+            <link>
+                <marking branch="534" id="7"/>
+                <source branch="534" id="1"/>
+                <target branch="534" id="5"/>
+                <weight>-1.9593153372825693</weight>
+            </link>
+            <link>
+                <marking branch="534" id="8"/>
+                <source branch="534" id="2"/>
+                <target branch="534" id="5"/>
+                <weight>0.3302046740351158</weight>
+            </link>
+            <link>
+                <marking branch="534" id="9"/>
+                <source branch="534" id="3"/>
+                <target branch="534" id="5"/>
+                <weight>2.0435993166967195</weight>
+            </link>
+            <link>
+                <marking branch="534" id="10"/>
+                <source branch="534" id="5"/>
+                <target branch="534" id="4"/>
+                <weight>-0.8084863515132545</weight>
+            </link>
+            <link>
+                <marking branch="534" id="33"/>
+                <source branch="534" id="1"/>
+                <target branch="534" id="32"/>
+                <weight>-0.17528168747162653</weight>
+            </link>
+            <link>
+                <marking branch="534" id="34"/>
+                <source branch="534" id="32"/>
+                <target branch="534" id="5"/>
+                <weight>-0.9507597501662584</weight>
+            </link>
+            <link>
+                <marking branch="540" id="107"/>
+                <source branch="534" id="1"/>
+                <target branch="540" id="106"/>
+                <weight>-1.1808558558631952</weight>
+            </link>
+            <link>
+                <marking branch="540" id="108"/>
+                <source branch="540" id="106"/>
+                <target branch="534" id="32"/>
+                <weight>2.840840043845216</weight>
+            </link>
+            <link>
+                <marking branch="540" id="127"/>
+                <source branch="534" id="1"/>
+                <target branch="534" id="4"/>
+                <weight>0.04727504223001344</weight>
+            </link>
+            <link>
+                <marking branch="540" id="157"/>
+                <source branch="534" id="1"/>
+                <target branch="540" id="156"/>
+                <weight>-0.12768478388762555</weight>
+            </link>
+            <link>
+                <marking branch="540" id="158"/>
+                <source branch="540" id="156"/>
+                <target branch="540" id="106"/>
+                <weight>-3.0</weight>
+            </link>
+            <link>
+                <marking branch="541" id="28"/>
+                <source branch="534" id="3"/>
+                <target branch="540" id="106"/>
+                <weight>-0.7821283492256342</weight>
+            </link>
+            <link>
+                <marking branch="541" id="45"/>
+                <source branch="534" id="3"/>
+                <target branch="534" id="32"/>
+                <weight>2.103069243604625</weight>
+            </link>
+            <link>
+                <marking branch="541" id="68"/>
+                <source branch="534" id="3"/>
+                <target branch="541" id="67"/>
+                <weight>2.866673989731464</weight>
+            </link>
+            <link>
+                <marking branch="541" id="69"/>
+                <source branch="541" id="67"/>
+                <target branch="534" id="32"/>
+                <weight>-0.33657381690053545</weight>
+            </link>
+            <link>
+                <marking branch="541" id="106"/>
+                <source branch="541" id="67"/>
+                <target branch="540" id="156"/>
+                <weight>0.5344723222961489</weight>
+            </link>
+            <link>
+                <marking branch="542" id="1"/>
+                <source branch="534" id="2"/>
+                <target branch="534" id="32"/>
+                <weight>0.3566547919236649</weight>
+            </link>
+            <link>
+                <marking branch="542" id="45"/>
+                <source branch="534" id="1"/>
+                <target branch="542" id="44"/>
+                <weight>2.9884688684613963</weight>
+            </link>
+            <link>
+                <marking branch="542" id="46"/>
+                <source branch="542" id="44"/>
+                <target branch="540" id="106"/>
+                <weight>1.9378633366706794</weight>
+            </link>
+            <link>
+                <marking branch="542" id="59"/>
+                <source branch="534" id="0"/>
+                <target branch="534" id="32"/>
+                <weight>0.5180761361354571</weight>
+            </link>
+            <link>
+                <marking branch="542" id="97"/>
+                <source branch="534" id="1"/>
+                <target branch="542" id="96"/>
+                <weight>1.726418671601825</weight>
+            </link>
+            <link>
+                <marking branch="542" id="98"/>
+                <source branch="542" id="96"/>
+                <target branch="540" id="106"/>
+                <weight>0.0018668364788525516</weight>
+            </link>
+            <link>
+                <marking branch="542" id="118"/>
+                <source branch="542" id="96"/>
+                <target branch="542" id="103"/>
+                <weight>0.029277431708193302</weight>
+            </link>
+            <link>
+                <marking branch="542" id="119"/>
+                <source branch="542" id="103"/>
+                <target branch="540" id="106"/>
+                <weight>1.1071927890407922</weight>
+            </link>
+            <link>
+                <marking branch="542" id="137"/>
+                <source branch="542" id="96"/>
+                <target branch="542" id="136"/>
+                <weight>0.030178331446069517</weight>
+            </link>
+            <link>
+                <marking branch="542" id="138"/>
+                <source branch="542" id="136"/>
+                <target branch="540" id="106"/>
+                <weight>-3.0</weight>
+            </link>
+        </links>
+    </genome>
+</data>
