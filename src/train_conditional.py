@@ -13,6 +13,7 @@ import optax
 
 from cppn_conditional import ConditionalCPPN, FlattenConditionalCPPNParameters
 import util
+import fer_metrics
 
 parser = argparse.ArgumentParser()
 group = parser.add_argument_group("meta")
@@ -33,6 +34,10 @@ group.add_argument("--init_scale", type=str, default="default", help="initializa
 group.add_argument("--mode", type=str, default="direct", choices=["direct", "distill"],
                    help="training mode: 'direct' trains from scratch, 'distill' trains from teacher outputs")
 group.add_argument("--teacher_dir", type=str, default=None, help="directory containing teacher model (required for distill mode)")
+
+group = parser.add_argument_group("metrics")
+group.add_argument("--track_metrics", action="store_true", help="track FER/UFR metrics during training")
+group.add_argument("--metric_interval", type=int, default=2000, help="compute metrics every N iterations")
 
 def parse_args(*args, **kwargs):
     args = parser.parse_args(*args, **kwargs)
@@ -99,11 +104,25 @@ def main(args):
 
     # Training loop
     losses = []
+    metric_history = {"steps": [], "feature_similarity": [], "neuron_specialization": [], "interpolation_smoothness": []}
+
     pbar = tqdm(range(args.n_iters//100))
     for i_iter in pbar:
         state, loss = jax.lax.scan(train_step, state, None, length=100)
         losses.append(loss)
         pbar.set_postfix(loss=loss.mean().item())
+
+        # Track metrics if enabled
+        if args.track_metrics:
+            current_step = (i_iter + 1) * 100
+            if current_step % args.metric_interval == 0 or current_step == args.n_iters:
+                # Pass flat params - metrics will handle internally
+                metrics = fer_metrics.compute_all_metrics(cppn, state.params, args.n_images)
+                metric_history["steps"].append(current_step)
+                metric_history["feature_similarity"].append(metrics["feature_similarity"])
+                metric_history["neuron_specialization"].append(metrics["neuron_specialization"])
+                metric_history["interpolation_smoothness"].append(metrics["interpolation_smoothness"])
+                fer_metrics.print_metrics(metrics, step=current_step)
 
     losses = np.array(jnp.concatenate(losses))
     params = state.params
@@ -137,6 +156,63 @@ def main(args):
         plt.tight_layout()
         plt.savefig(f"{args.save_dir}/all_images.png", dpi=150, bbox_inches='tight')
         plt.close()
+
+        # Save and plot metrics if tracked
+        if args.track_metrics and len(metric_history["steps"]) > 0:
+            util.save_pkl(args.save_dir, "fer_metrics", metric_history)
+
+            # Plot metrics
+            fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+
+            # Loss curve
+            axes[0, 0].plot(losses, alpha=0.3, color='darkred')
+            losses_smooth = np.convolve(losses, np.ones(1000)/1000, mode='valid')
+            axes[0, 0].plot(losses_smooth, color='darkred', linewidth=2)
+            axes[0, 0].set_yscale('log')
+            axes[0, 0].set_xlabel('Training Step')
+            axes[0, 0].set_ylabel('Loss')
+            axes[0, 0].set_title('Training Loss')
+            axes[0, 0].grid(True, alpha=0.3)
+
+            # Feature similarity
+            axes[0, 1].plot(metric_history["steps"], metric_history["feature_similarity"], marker='o', color='blue', linewidth=2)
+            axes[0, 1].axhline(y=0.6, color='green', linestyle='--', alpha=0.5, label='UFR threshold')
+            axes[0, 1].axhline(y=0.3, color='red', linestyle='--', alpha=0.5, label='FER threshold')
+            axes[0, 1].set_xlabel('Training Step')
+            axes[0, 1].set_ylabel('Feature Correlation')
+            axes[0, 1].set_title('Feature Similarity (↑ = UFR, ↓ = FER)')
+            axes[0, 1].legend()
+            axes[0, 1].grid(True, alpha=0.3)
+            axes[0, 1].set_ylim(0, 1)
+
+            # Neuron specialization
+            axes[1, 0].plot(metric_history["steps"], metric_history["neuron_specialization"], marker='o', color='orange', linewidth=2)
+            axes[1, 0].axhline(y=0.2, color='green', linestyle='--', alpha=0.5, label='UFR threshold')
+            axes[1, 0].axhline(y=0.4, color='red', linestyle='--', alpha=0.5, label='FER threshold')
+            axes[1, 0].set_xlabel('Training Step')
+            axes[1, 0].set_ylabel('Coefficient of Variation')
+            axes[1, 0].set_title('Neuron Specialization (↑ = FER, ↓ = UFR)')
+            axes[1, 0].legend()
+            axes[1, 0].grid(True, alpha=0.3)
+
+            # Interpolation smoothness
+            axes[1, 1].plot(metric_history["steps"], metric_history["interpolation_smoothness"], marker='o', color='purple', linewidth=2)
+            axes[1, 1].axhline(y=0.7, color='green', linestyle='--', alpha=0.5, label='UFR threshold')
+            axes[1, 1].axhline(y=0.5, color='red', linestyle='--', alpha=0.5, label='FER threshold')
+            axes[1, 1].set_xlabel('Training Step')
+            axes[1, 1].set_ylabel('Smoothness Score')
+            axes[1, 1].set_title('Interpolation Smoothness (↑ = UFR, ↓ = FER)')
+            axes[1, 1].legend()
+            axes[1, 1].grid(True, alpha=0.3)
+            axes[1, 1].set_ylim(0, 1)
+
+            plt.suptitle(f'FER/UFR Metrics Evolution ({args.arch}, {cppn.n_params} params)',
+                        fontsize=14, fontweight='bold')
+            plt.tight_layout()
+            plt.savefig(f"{args.save_dir}/fer_metrics.png", dpi=150, bbox_inches='tight')
+            plt.close()
+
+            print(f"FER/UFR metrics saved to {args.save_dir}/fer_metrics.png")
 
         print(f"Results saved to {args.save_dir}")
 
