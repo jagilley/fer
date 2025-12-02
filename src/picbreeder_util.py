@@ -22,6 +22,25 @@ def _xml_to_dict(element):
             node["#text"] = element.text.strip()
     return node
 
+def load_xml_as_dict(xml_file_path):
+    """
+    Load an XML file and return the dictionary representation of the XML.
+    Handles XML files with extra <cppn-data> elements.
+    """
+    with open(xml_file_path, 'r', encoding='utf-8') as file:
+        file_content = file.read()
+
+    # Remove standalone <cppn-data> tags that cause parsing issues
+    lines = file_content.split('\n')
+    filtered_lines = [line for line in lines if not line.strip().startswith('<cppn-data')]
+    file_content = '\n'.join(filtered_lines)
+
+    element = ET.fromstring(file_content)
+    root = _xml_to_dict(element)
+    if 'genome' not in root:
+        root = dict(genome=root)
+    return root
+
 def load_zip_xml_as_dict(zip_file_path):
     """
     Load a zip file containing an XML file and return the dictionary representation of the XML.

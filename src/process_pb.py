@@ -13,11 +13,16 @@ from cppn import CPPN, FlattenCPPNParameters, activation_fn_map
 import util
 import picbreeder_util
 
-def load_pbcppn(zip_file_path):
+def load_pbcppn(file_path):
     """
-    Load the raw picbreeder genome from a zip file and convert it to a dictionary of nodes and links (the NEAT graph).
+    Load the raw picbreeder genome from a zip or xml file and convert it to a dictionary of nodes and links (the NEAT graph).
     """
-    root = picbreeder_util.load_zip_xml_as_dict(zip_file_path)
+    if file_path.endswith('.zip'):
+        root = picbreeder_util.load_zip_xml_as_dict(file_path)
+    elif file_path.endswith('.xml'):
+        root = picbreeder_util.load_xml_as_dict(file_path)
+    else:
+        raise ValueError(f"Unsupported file type: {file_path}. Must be .zip or .xml")
 
     ns, ls = [], []
     nodes_ = root['genome']['nodes']['node']
@@ -244,7 +249,7 @@ group = parser.add_argument_group("meta")
 # group.add_argument("--seed", type=int, default=0, help="the random seed")
 
 group = parser.add_argument_group("data")
-group.add_argument("--zip_path", type=str, default=None, help="path to rep.zip")
+group.add_argument("--file_path", type=str, default=None, help="path to .zip or .xml file")
 group.add_argument("--save_dir", type=str, default=None, help="path to save results to")
 
 def parse_args(*args, **kwargs):
@@ -258,7 +263,7 @@ def main(args):
     """
     Layerize the given raw picbreeder genome and save the cppn parameters and image to a directory.
     """
-    pbcppn = load_pbcppn(args.zip_path)
+    pbcppn = load_pbcppn(args.file_path)
     layerize_outputs = layerize_nn(pbcppn)
     arch, params = layerize_outputs['arch'], layerize_outputs['params']
     cppn = FlattenCPPNParameters(CPPN(arch))
