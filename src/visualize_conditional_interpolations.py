@@ -253,11 +253,12 @@ def compute_interpolation_smoothness(cppn, params, n_samples=20, img_size=64):
     return smoothness_scores
 
 
-def main():
+def main(save_dir=None):
     # Load the trained conditional CPPN
-    save_dir = "../data/conditional_small_direct"
+    if save_dir is None:
+        save_dir = "../data/conditional_small_direct"
 
-    print("Loading conditional CPPN...")
+    print(f"Loading conditional CPPN from: {save_dir}")
     arch = util.load_pkl(save_dir, "arch")
     params = util.load_pkl(save_dir, "params")
     args = util.load_pkl(save_dir, "args")
@@ -277,16 +278,20 @@ def main():
     print("Generating edge interpolations...")
     print("="*60)
     fig1 = visualize_edge_interpolations(cppn, params_unflattened, img_size=128)
-    plt.savefig("conditional_edge_interpolations.png", dpi=150, bbox_inches='tight')
-    print("Saved to: conditional_edge_interpolations.png")
+    output_path_1 = f"{save_dir}/edge_interpolations.png"
+    plt.savefig(output_path_1, dpi=150, bbox_inches='tight')
+    print(f"Saved to: {output_path_1}")
+    plt.close()
 
     # 2. Simplex sampling
     print("\n" + "="*60)
     print("Generating simplex sampling...")
     print("="*60)
     fig2 = visualize_simplex_sampling(cppn, params_unflattened, img_size=64)
-    plt.savefig("conditional_simplex_sampling.png", dpi=150, bbox_inches='tight')
-    print("Saved to: conditional_simplex_sampling.png")
+    output_path_2 = f"{save_dir}/simplex_sampling.png"
+    plt.savefig(output_path_2, dpi=150, bbox_inches='tight')
+    print(f"Saved to: {output_path_2}")
+    plt.close()
 
     # 3. Smoothness analysis
     smoothness_scores = compute_interpolation_smoothness(cppn, params_unflattened, n_samples=20, img_size=64)
@@ -302,4 +307,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if len(sys.argv) > 1:
+        main(save_dir=sys.argv[1])
+    else:
+        main()
