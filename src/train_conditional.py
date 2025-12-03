@@ -14,6 +14,7 @@ import optax
 from cppn_conditional import ConditionalCPPN, FlattenConditionalCPPNParameters
 import util
 import fer_metrics
+import post_training_viz
 
 parser = argparse.ArgumentParser()
 group = parser.add_argument_group("meta")
@@ -213,6 +214,9 @@ def main(args):
             plt.close()
 
             print(f"FER/UFR metrics saved to {args.save_dir}/fer_metrics.png")
+
+        # Run post-training visualizations
+        post_training_viz.run_all_visualizations(cppn, params, args.save_dir, n_images=args.n_images)
 
         print(f"Results saved to {args.save_dir}")
 

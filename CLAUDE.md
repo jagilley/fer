@@ -72,9 +72,17 @@ Architecture is specified as `"<layers>;<activation>:<count>,..."`:
 - Optional FER/UFR metric tracking during training
 
 **`src/fer_metrics.py`**: FER/UFR representation metrics
-- `feature_similarity`: Correlation between feature maps (high = UFR)
-- `neuron_specialization`: Coefficient of variation (high = FER)
-- `interpolation_smoothness`: Smoothness along conditioning simplex (high = UFR)
+- `feature_similarity`: Correlation between feature maps (high = UFR) - conditional only
+- `neuron_specialization`: Coefficient of variation (high = FER) - conditional only
+- `interpolation_smoothness`: Smoothness along conditioning simplex (high = UFR) - conditional only
+- `spatial_roughness`: **KEY METRIC** - measures spatial smoothness of feature maps (low = UFR)
+
+**`src/train_distill.py`**: Distillation training (teacher → student)
+- Phase 1: Train student on teacher outputs at simplex-sampled points
+- Phase 2: Fine-tune on ground truth images
+
+**`src/post_training_viz.py`**: Auto-generates visualizations after training
+- Edge interpolations, simplex sampling, feature maps
 
 ### Data Flow
 1. Images loaded as (H, W, 3) RGB arrays via matplotlib
@@ -88,3 +96,29 @@ Architecture is specified as `"<layers>;<activation>:<count>,..."`:
 - `experiments/`: Training scripts with specific configurations
 - `picbreeder_genomes/`: Raw Picbreeder genome files
 - `assets/`: Paper figures and visualizations
+
+## Key Research Findings
+
+### Spatial Roughness as UFR/FER Metric
+
+**The most important discovery**: Spatial roughness of feature maps is the best quantitative indicator of UFR vs FER.
+
+- **Roughness** = average gradient magnitude across feature maps (how much adjacent pixels differ)
+- **UFR (Picbreeder)**: Very smooth feature maps, roughness ~0.005-0.01, max roughness <0.10
+- **FER (SGD-trained)**: Noisy/patchy feature maps, roughness ~0.04-0.06, max roughness >0.15
+
+Why this matters:
+1. **Only metric that works for both single-image and conditional CPPNs** - other metrics require multiple outputs
+2. **Directly measures "clean functional composition"** - UFR networks compute smooth transformations, FER networks develop noisy specialized circuits
+3. **Matches qualitative claims in original FER paper** - they described "random bullshit" in intermediate layers but didn't quantify it
+
+### Model Size Findings
+
+- **Tiny models** (840 params) have lower spatial roughness than larger models - capacity constraints force smoother representations
+- **Distillation** from tiny → small partially transfers smoothness, but effect is limited
+- **All SGD-trained models** are far from Picbreeder-level smoothness (5-10x higher roughness)
+
+### What Doesn't Work as UFR Metrics
+
+- **Max activation magnitude**: Differs between Picbreeder and SGD, but likely just a process artifact (NEAT vs gradient descent), not indicative of representation quality
+- **Feature similarity/neuron specialization**: Only work for conditional CPPNs, don't generalize

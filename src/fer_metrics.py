@@ -45,6 +45,51 @@ def compute_feature_similarity(cppn, params, n_images=3, img_size=64):
     return np.mean(layer_correlations) if layer_correlations else 0.0
 
 
+def compute_spatial_roughness(cppn, params, n_images=3, img_size=64):
+    """
+    Compute average spatial roughness of feature maps.
+
+    Roughness measures how much adjacent pixels differ - smooth gradients have low
+    roughness, noisy/patchy patterns have high roughness. Picbreeder (UFR) CPPNs
+    have dramatically lower roughness than SGD-trained (FER) CPPNs.
+
+    This is the most direct measure of "clean functional composition" - UFR networks
+    compute smooth transformations, while FER networks develop noisy/patchy patterns.
+
+    Returns:
+        dict with:
+            - avg_roughness: Mean roughness across all feature maps (lower = more UFR)
+            - max_roughness: Maximum roughness across all feature maps (lower = more UFR)
+    """
+    # Generate features for each image
+    features_list = []
+    for img_id in range(n_images):
+        _, features = cppn.generate_image(params, image_id=img_id, img_size=img_size, return_features=True)
+        features_list.append([np.array(f) for f in features])
+
+    all_roughnesses = []
+
+    n_layers = len(features_list[0])
+    for layer_idx in range(n_layers):
+        for img_id in range(n_images):
+            layer_feat = features_list[img_id][layer_idx]
+            n_neurons = layer_feat.shape[-1]
+
+            for n in range(n_neurons):
+                fmap = layer_feat[:, :, n]
+
+                # Compute gradient magnitude (roughness)
+                gx = np.diff(fmap, axis=0)
+                gy = np.diff(fmap, axis=1)
+                roughness = (np.mean(np.abs(gx)) + np.mean(np.abs(gy))) / 2
+                all_roughnesses.append(roughness)
+
+    return {
+        "avg_roughness": np.mean(all_roughnesses),
+        "max_roughness": np.max(all_roughnesses),
+    }
+
+
 def compute_neuron_specialization(cppn, params, n_images=3, img_size=64):
     """
     Compute average neuron specialization (coefficient of variation).
@@ -163,10 +208,13 @@ def compute_all_metrics(cppn, params, n_images=3, img_size_features=64, img_size
     Returns:
         dict: Dictionary with all metric values
     """
+    roughness = compute_spatial_roughness(cppn, params, n_images, img_size_features)
     return {
         "feature_similarity": compute_feature_similarity(cppn, params, n_images, img_size_features),
         "neuron_specialization": compute_neuron_specialization(cppn, params, n_images, img_size_features),
         "interpolation_smoothness": compute_interpolation_smoothness(cppn, params, n_images, img_size=img_size_interp),
+        "spatial_roughness": roughness["avg_roughness"],
+        "max_roughness": roughness["max_roughness"],
     }
 
 
@@ -180,3 +228,5 @@ def print_metrics(metrics, step=None):
     print(f"  Feature Similarity:       {metrics['feature_similarity']:.4f} (UFR: high, FER: low)")
     print(f"  Neuron Specialization:    {metrics['neuron_specialization']:.4f} (UFR: low, FER: high)")
     print(f"  Interpolation Smoothness: {metrics['interpolation_smoothness']:.4f} (UFR: high, FER: low)")
+    print(f"  Spatial Roughness:        {metrics['spatial_roughness']:.4f} (UFR: low, FER: high)")
+    print(f"  Max Roughness:            {metrics['max_roughness']:.4f} (UFR: <0.10, FER: >0.15)")
