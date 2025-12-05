@@ -45,6 +45,48 @@ def compute_feature_similarity(cppn, params, n_images=3, img_size=64):
     return np.mean(layer_correlations) if layer_correlations else 0.0
 
 
+def compute_effective_dim_ratio(cppn, params, n_images=3, img_size=64):
+    """
+    Compute effective dimensionality ratio of feature maps.
+
+    Effective rank measures how many dimensions are actually used (vs available).
+    UFR networks reuse a small basis of features → low effective dimensionality (~0.3).
+    FER networks use independent specialized circuits → high effective dimensionality (~0.8).
+
+    Returns:
+        float: Max effective rank / neurons across internal layers (lower = more UFR)
+               Picbreeder (UFR): 0.27-0.41
+               SGD-trained (FER): 0.79-0.88
+    """
+    # Generate features for each image
+    features_list = []
+    for img_id in range(n_images):
+        _, features = cppn.generate_image(params, image_id=img_id, img_size=img_size, return_features=True)
+        features_list.append([np.array(f) for f in features])
+
+    n_layers = len(features_list[0])
+    ratios = []
+
+    for layer_idx in range(n_layers):
+        # Stack features across all images: (n_images, H, W, neurons)
+        layer_feats = np.stack([features_list[i][layer_idx] for i in range(n_images)])
+        n_neurons = layer_feats.shape[-1]
+
+        # Flatten to (samples, neurons) and compute effective rank
+        X = layer_feats.reshape(-1, n_neurons)
+        s = np.linalg.svd(X, compute_uv=False)
+        s = s / (s.sum() + 1e-10)
+        s = s[s > 1e-10]
+        entropy = -np.sum(s * np.log(s))
+        eff_rank = np.exp(entropy)
+
+        ratios.append(eff_rank / n_neurons)
+
+    # Return max across internal layers (exclude first and last)
+    internal_ratios = ratios[1:-1] if len(ratios) > 2 else ratios
+    return max(internal_ratios)
+
+
 def compute_spatial_roughness(cppn, params, n_images=3, img_size=64):
     """
     Compute average spatial roughness of feature maps.
@@ -215,6 +257,7 @@ def compute_all_metrics(cppn, params, n_images=3, img_size_features=64, img_size
         "interpolation_smoothness": compute_interpolation_smoothness(cppn, params, n_images, img_size=img_size_interp),
         "spatial_roughness": roughness["avg_roughness"],
         "max_roughness": roughness["max_roughness"],
+        "effective_dim_ratio": compute_effective_dim_ratio(cppn, params, n_images, img_size_features),
     }
 
 
@@ -230,3 +273,4 @@ def print_metrics(metrics, step=None):
     print(f"  Interpolation Smoothness: {metrics['interpolation_smoothness']:.4f} (UFR: high, FER: low)")
     print(f"  Spatial Roughness:        {metrics['spatial_roughness']:.4f} (UFR: low, FER: high)")
     print(f"  Max Roughness:            {metrics['max_roughness']:.4f} (UFR: <0.10, FER: >0.15)")
+    print(f"  Effective Dim Ratio:      {metrics['effective_dim_ratio']:.4f} (UFR: <0.45, FER: >0.75)")
