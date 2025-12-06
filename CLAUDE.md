@@ -106,3 +106,6 @@ See **`LAB_NOTES.md`** for detailed experimental findings and insights.
 - **Effective Dim Ratio**: Measures what fraction of dimensions are used (UFR: ~0.3, FER: ~0.85)
 
 Both metrics show zero overlap between Picbreeder (UFR) and SGD-trained (FER) networks, and work for both single-image and conditional CPPNs.
+
+## Notes
+- When creating experiments, please put the `train.sh` file for that experiment inside the experiment directory, like `experiments/conditional_intermediate_direct/train.sh`.
